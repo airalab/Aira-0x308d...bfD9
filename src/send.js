@@ -1,6 +1,6 @@
 import { Telegraf } from "telegraf";
 import uniswap from "./uniswap";
-import stex from "./stex";
+// import stex from "./stex";
 import huobi from "./huobi";
 import { numberFormat } from "./tools";
 import config from "../config.json";
@@ -16,12 +16,12 @@ const data = {
     liquidityChange: 0,
     volumeChange: 0,
   },
-  stex: {
-    price: 0,
-    min: 0,
-    max: 0,
-    volume: 0,
-  },
+  // stex: {
+  //   price: 0,
+  //   min: 0,
+  //   max: 0,
+  //   volume: 0,
+  // },
   huobi: {
     price: 0,
     priceUsd: 0,
@@ -35,6 +35,12 @@ async function main() {
   data.uniswap = await uniswap();
   data.stex = await stex();
   data.huobi = await huobi();
+
+  // [<a href="https://app.stex.com/en/trade/pair/ETH/XRT/5">STEX</a>]
+  // 1 XRT = ${data.stex.price} ETH;
+  // 24h max price ${data.stex.max} ETH;
+  // 24h min price ${data.stex.min} ETH;
+  //   Volume(24hrs): $${ numberFormat(data.stex.volume) };
 
   const template = `<b>Good day everyone! The regular daily state below:</b>
 
@@ -53,17 +59,12 @@ Volume (24hrs): $${numberFormat(data.uniswap.volume)} (${
 24h min price ${data.huobi.min} ETH;
 Volume (24hrs): $${numberFormat(data.huobi.volume)};
 
-[<a href="https://app.stex.com/en/trade/pair/ETH/XRT/5">STEX</a>]
-1 XRT = ${data.stex.price} ETH;
-24h max price ${data.stex.max} ETH;
-24h min price ${data.stex.min} ETH;
-Volume (24hrs): $${numberFormat(data.stex.volume)};
-
 p.s.: participate in the development of Robonomics project! Check events in the main chat of the community: t.me/robonomics
 `;
 
   return bot.telegram.sendMessage(config.TRADE_GROUP, template, {
     parse_mode: "HTML",
+    disable_web_page_preview: true,
   });
 }
 main();

@@ -56,9 +56,8 @@ const dict = messagesReply.reduce((accumulator, item, index) => {
 const words = Object.keys(dict);
 
 bot.on("text", async (ctx, next) => {
-  // console.log(ctx.update, ctx.botInfo);
   if (
-    ctx.message.chat.type === "group" &&
+    ctx.message.chat.type === "group" ||
     ctx.message.chat.type === "supergroup"
   ) {
     const admins = await ctx.telegram.getChatAdministrators(
@@ -77,6 +76,7 @@ bot.on("text", async (ctx, next) => {
   if (i >= 0) {
     await ctx.replyWithMarkdown(messagesReply[dict[words[i]]].message, {
       reply_to_message_id: ctx.message.message_id,
+      disable_web_page_preview: true,
 
       reply_markup: Markup.inlineKeyboard([
         [
@@ -105,13 +105,5 @@ const stage = new Stage([issue, email], { ttl: 200 });
 bot.use(session());
 bot.use(stage.middleware());
 bot.command("issue", (ctx) => ctx.scene.enter("issue"));
-
-// bot.on("new_chat_members", (ctx) => {
-//   let members = "";
-//   ctx.message.new_chat_members.forEach((member) => {
-//     members += "@" + member.username + " ";
-//   });
-//   ctx.reply(members + "привет");
-// });
 
 bot.launch();
